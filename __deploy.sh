@@ -7,7 +7,7 @@ CONFIG_DIR="$HOME/.config/opencode"
 
 [[ -d "$INSTALL_DIR" ]] || mkdir -p "$INSTALL_DIR"
 
-LATEST="0.1.0"
+LATEST=$(curl -s "$URL" | awk -F'"' '/"tag_name": "/ {gsub(/^v/, "", $4); print $4}')
 
 if [[ $? -ne 0 || -z "$LATEST" ]]; then
   echo "Failed to fetch version information"
