@@ -49,3 +49,17 @@ cat >"$CONFIG_DIR/opencode.json" <<EOF
   }
 }
 EOF
+
+ICON_DIR="$HOME/.local/share/icons"
+[[ -d "$ICON_DIR" ]] || mkdir -p "$ICON_DIR"
+cp "$(dirname "$0")/opencode.svg" "$ICON_DIR/opencode.svg"
+DESKTOP_DIR="$HOME/.local/share/applications"
+[[ -d "$DESKTOP_DIR" ]] || mkdir -p "$DESKTOP_DIR"
+cat >"$DESKTOP_DIR/opencode.desktop" <<EOF
+[Desktop Entry]
+Name=OpenCode
+Exec=alacritty --command opencode
+Icon=$HOME/.local/share/icons/opencode.svg
+Type=Application
+Categories=Development;
+EOF
