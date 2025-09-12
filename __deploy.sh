@@ -1,5 +1,20 @@
 #!/bin/bash
 
+ADD_ALACRITTY_CONFIG=true
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --no-alacritty-config)
+      ADD_ALACRITTY_CONFIG=false
+      shift
+      ;;
+    *)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+  esac
+done
+
 INSTALL_DIR="$HOME/bin"
 FILENAME="opencode-linux-x64.zip"
 URL=https://api.github.com/repos/sst/opencode/releases/latest
@@ -40,7 +55,7 @@ if command -v opencode >/dev/null 2>&1; then
 fi
 
 [[ -d "$CONFIG_DIR" ]] || mkdir -p "$CONFIG_DIR"
-cat >"$CONFIG_DIR/opencode.json" <<EOF
+cat >"$CONFIG_DIR/opencode.json" <<-EOF
 {
   "\$schema": "https://opencode.ai/config.json",
   "theme": "catppuccin",
@@ -55,21 +70,23 @@ ICON_DIR="$HOME/.local/share/icons"
 cp "$(dirname "$0")/opencode.svg" "$ICON_DIR/opencode.svg"
 
 if command -v alacritty >/dev/null 2>&1; then
-  ALACRITTY_CONFIG_DIR="$HOME/.config/alacritty"
-  mkdir -p "$ALACRITTY_CONFIG_DIR"
-  ALACRITTY_CONFIG_FILE="$ALACRITTY_CONFIG_DIR/alacritty.toml"
-  cat > "$ALACRITTY_CONFIG_FILE" <<EOF
-[keyboard]
-bindings = [
-  { key = "Enter", mods = "Shift", chars = "\n" },
-]
-EOF
+  if $ADD_ALACRITTY_CONFIG; then
+    ALACRITTY_CONFIG_DIR="$HOME/.config/alacritty"
+    mkdir -p "$ALACRITTY_CONFIG_DIR"
+    ALACRITTY_CONFIG_FILE="$ALACRITTY_CONFIG_DIR/alacritty.toml"
+    cat > "$ALACRITTY_CONFIG_FILE" <<-EOF
+			[keyboard]
+			bindings = [
+			  { key = "Enter", mods = "Shift", chars = "\n" },
+			]
+			EOF
+  fi
 fi
 
 
 DESKTOP_DIR="$HOME/.local/share/applications"
 [[ -d "$DESKTOP_DIR" ]] || mkdir -p "$DESKTOP_DIR"
-cat >"$DESKTOP_DIR/opencode.desktop" <<EOF
+cat >"$DESKTOP_DIR/opencode.desktop" <<-EOF
 [Desktop Entry]
 Name=OpenCode
 Exec=alacritty --command opencode
