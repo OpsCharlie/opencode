@@ -53,6 +53,20 @@ EOF
 ICON_DIR="$HOME/.local/share/icons"
 [[ -d "$ICON_DIR" ]] || mkdir -p "$ICON_DIR"
 cp "$(dirname "$0")/opencode.svg" "$ICON_DIR/opencode.svg"
+
+if command -v alacritty >/dev/null 2>&1; then
+  ALACRITTY_CONFIG_DIR="$HOME/.config/alacritty"
+  mkdir -p "$ALACRITTY_CONFIG_DIR"
+  ALACRITTY_CONFIG_FILE="$ALACRITTY_CONFIG_DIR/alacritty.toml"
+  cat > "$ALACRITTY_CONFIG_FILE" <<EOF
+[keyboard]
+bindings = [
+  { key = "Enter", mods = "Shift", chars = "\n" },
+]
+EOF
+fi
+
+
 DESKTOP_DIR="$HOME/.local/share/applications"
 [[ -d "$DESKTOP_DIR" ]] || mkdir -p "$DESKTOP_DIR"
 cat >"$DESKTOP_DIR/opencode.desktop" <<EOF
