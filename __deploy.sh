@@ -89,7 +89,7 @@ DESKTOP_DIR="$HOME/.local/share/applications"
 cat >"$DESKTOP_DIR/opencode.desktop" <<-EOF
 [Desktop Entry]
 Name=OpenCode
-Exec=alacritty --command opencode
+Exec=/usr/bin/alacritty --command "$INSTALL_DIR/opencode"
 Icon=$HOME/.local/share/icons/opencode.svg
 Type=Application
 Categories=Development;
