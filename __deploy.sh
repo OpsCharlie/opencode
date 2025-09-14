@@ -86,7 +86,9 @@ cat >"$CONFIG_DIR/opencode.json" <<-EOF
   "\$schema": "https://opencode.ai/config.json",
   "theme": "catppuccin",
   "keybinds": {
-    "input_newline": "shift+enter,alt+enter"
+    "input_newline": "shift+enter,alt+enter",
+    "messages_half_page_up": "ctrl+u",
+    "messages_half_page_down": "ctrl+d",
   }
 }
 EOF
