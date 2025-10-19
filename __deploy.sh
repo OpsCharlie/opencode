@@ -37,9 +37,7 @@ fi
 
 [[ -d "$INSTALL_DIR" ]] || mkdir -p "$INSTALL_DIR"
 
-LATEST=$(curl -s "$URL" | jq -r '.tag_name | sub("^v"; "")')
-$VERBOSE && echo "Fetched latest version: $LATEST"
-
+LATEST=$(curl --fail --silent "$URL" | jq -r '.tag_name | sub("^v"; "")')
 if [[ $? -ne 0 || -z "$LATEST" ]]; then
   echo "Failed to fetch version information"
   exit 1
@@ -59,7 +57,11 @@ if command -v opencode >/dev/null 2>&1; then
     cd "$TEMP_DIR" || exit 1
     DOWNLOAD_URL="https://github.com/sst/opencode/releases/download/v$LATEST/$FILENAME"
     $VERBOSE && echo "Downloading from $DOWNLOAD_URL"
-    curl -# -L -o "$FILENAME" "$DOWNLOAD_URL" || {
+    curl --head --fail "$DOWNLOAD_URL" > /dev/null 2>&1 || {
+      echo "Download URL not accessible"
+      exit 1
+    }
+    curl -# --location --output "$FILENAME" "$DOWNLOAD_URL" || {
       echo "Download failed"
       exit 1
     }
@@ -81,6 +83,9 @@ if command -v opencode >/dev/null 2>&1; then
 fi
 
 [[ -d "$CONFIG_DIR" ]] || mkdir -p "$CONFIG_DIR"
+if [[ -f "$CONFIG_DIR/opencode.json" ]]; then
+  cp "$CONFIG_DIR/opencode.json" "$CONFIG_DIR/opencode.json.bak"
+fi
 cat >"$CONFIG_DIR/opencode.json" <<-EOF
 {
   "\$schema": "https://opencode.ai/config.json",
