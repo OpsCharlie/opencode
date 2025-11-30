@@ -1,0 +1,184 @@
+---
+# vim: set ft=yaml.ansible:
+
+- name: Deploy OpenCode
+  hosts: localhost
+  connection: local
+  vars:
+    install_dir: "{{ ansible_user_dir }}/.local/bin"
+    config_dir: "{{ ansible_user_dir }}/.config/opencode"
+    icon_dir: "{{ ansible_user_dir }}/.local/share/icons"
+    desktop_dir: "{{ ansible_user_dir }}/.local/share/applications"
+    alacritty_config_dir: "{{ ansible_user_dir }}/.config/alacritty"
+    alacritty_config_file: "{{ alacritty_config_dir }}/alacritty.toml"
+    add_alacritty_config: true
+    repo_url: "https://api.github.com/repos/sst/opencode/releases/latest"
+    filename: "opencode-linux-x64.tar.gz"
+
+  tasks:
+    - name: Check required commands
+      ansible.builtin.command: "which {{ item }}"
+      register: required_commands
+      failed_when: false
+      changed_when: false
+      loop:
+        - jq
+        - curl
+        - tar
+
+    - name: Fail if required commands are missing
+      ansible.builtin.fail:
+        msg: "{{ item.item }} is required but not installed"
+      when: item.rc != 0
+      loop: "{{ required_commands.results }}"
+
+    - name: Create installation directory
+      ansible.builtin.file:
+        path: "{{ install_dir }}"
+        state: directory
+        mode: '0750'
+
+    - name: Fetch latest release information
+      ansible.builtin.uri:
+        url: "{{ repo_url }}"
+        method: GET
+        return_content: true
+      register: release_info
+
+    - name: Extract latest version
+      ansible.builtin.set_fact:
+        latest_version: "{{ release_info.json | json_query('tag_name') | regex_replace('^v', '') }}"
+
+    - name: Check if OpenCode is already installed
+      ansible.builtin.command: "opencode --version"
+      register: installed_version
+      failed_when: false
+      changed_when: false
+
+    - name: Set installation needed flag
+      ansible.builtin.set_fact:
+        install_needed: "{{ installed_version.rc != 0 or (installed_version.stdout | default('') != latest_version) }}"
+
+    - name: Display version information
+      ansible.builtin.debug:
+        msg: |
+          Latest: {{ latest_version }}
+          Installed: {{ installed_version.stdout | default('Not installed') }}
+          Install needed: {{ install_needed }}
+
+    - name: Create temporary directory for download
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: opencode
+      register: temp_dir
+      when: install_needed
+
+    - name: Download OpenCode
+      ansible.builtin.get_url:
+        url: "https://github.com/sst/opencode/releases/latest/download/{{ filename }}"
+        dest: "{{ temp_dir.path }}/{{ filename }}"
+        mode: '0644'
+      when: install_needed
+
+    - name: Extract OpenCode
+      ansible.builtin.unarchive:
+        src: "https://github.com/sst/opencode/releases/latest/download/{{ filename }}"
+        dest: "{{ temp_dir.path }}"
+        remote_src: true
+      when: install_needed
+
+    - name: Install OpenCode binary
+      ansible.builtin.copy:
+        src: "{{ temp_dir.path }}/opencode"
+        dest: "{{ install_dir }}/opencode_{{ latest_version }}"
+        mode: '0750'
+        remote_src: true
+      when: install_needed
+
+    - name: Create symlink
+      ansible.builtin.file:
+        src: "{{ install_dir }}/opencode_{{ latest_version }}"
+        dest: "{{ install_dir }}/opencode"
+        state: link
+
+    - name: Clean up temporary directory
+      ansible.builtin.file:
+        path: "{{ temp_dir.path }}"
+        state: absent
+      when: install_needed
+
+    - name: Create OpenCode config directory
+      ansible.builtin.file:
+        path: "{{ config_dir }}"
+        state: directory
+        mode: '0750'
+
+    - name: Create OpenCode configuration
+      ansible.builtin.copy:
+        content: |
+          {
+            "$schema": "https://opencode.ai/config.json",
+            "theme": "catppuccin",
+            "keybinds": {
+              "input_newline": "shift+enter,alt+enter",
+              "messages_half_page_up": "ctrl+u",
+              "messages_half_page_down": "ctrl+d"
+            }
+          }
+        dest: "{{ config_dir }}/opencode.json"
+        mode: '0640'
+        backup: true
+
+    - name: Create icon directory
+      ansible.builtin.file:
+        path: "{{ icon_dir }}"
+        state: directory
+        mode: '0750'
+
+    - name: Copy OpenCode icon
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/opencode.svg"
+        dest: "{{ icon_dir }}/opencode.svg"
+        mode: '0640'
+
+    - name: Check if Alacritty is installed
+      ansible.builtin.command: "which alacritty"
+      register: alacritty_path
+      failed_when: false
+      changed_when: false
+
+    - name: Create Alacritty config directory
+      ansible.builtin.file:
+        path: "{{ alacritty_config_dir }}"
+        state: directory
+        mode: '0750'
+      when: alacritty_path.rc == 0 and add_alacritty_config
+
+    - name: Configure Alacritty keyboard bindings
+      ansible.builtin.copy:
+        content: |
+          [keyboard]
+          bindings = [
+            { key = "Enter", mods = "Shift", chars = "\n" },
+          ]
+        dest: "{{ alacritty_config_file }}"
+        mode: '0640'
+      when: alacritty_path.rc == 0 and add_alacritty_config
+
+    - name: Create desktop applications directory
+      ansible.builtin.file:
+        path: "{{ desktop_dir }}"
+        state: directory
+        mode: '0750'
+
+    - name: Create desktop entry
+      ansible.builtin.copy:
+        content: |
+          [Desktop Entry]
+          Name=OpenCode
+          Exec={{ alacritty_path.stdout | default('/bin/bash') }} --command "{{ install_dir }}/opencode"
+          Icon={{ icon_dir }}/opencode.svg
+          Type=Application
+          Categories=Development;
+        dest: "{{ desktop_dir }}/opencode.desktop"
+        mode: '0640'
