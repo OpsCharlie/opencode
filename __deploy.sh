@@ -22,7 +22,7 @@ done
 
 DIR=$(dirname "$(readlink -f "$0")")
 INSTALL_DIR="$HOME/bin"
-FILENAME="opencode-linux-x64.zip"
+FILENAME="opencode-linux-x64.tar.gz"
 URL=https://api.github.com/repos/sst/opencode/releases/latest
 CONFIG_DIR="$HOME/.config/opencode"
 
@@ -55,7 +55,7 @@ if command -v opencode >/dev/null 2>&1; then
     TEMP_DIR=$(mktemp -d)
     trap '[[ -d "$TEMP_DIR" ]] && rm -rf "$TEMP_DIR"' EXIT
     cd "$TEMP_DIR" || exit 1
-    DOWNLOAD_URL="https://github.com/sst/opencode/releases/download/v$LATEST/$FILENAME"
+    DOWNLOAD_URL="https://github.com/sst/opencode/releases/latest/download/$FILENAME"
     $VERBOSE && echo "Downloading from $DOWNLOAD_URL"
     curl --head --fail "$DOWNLOAD_URL" > /dev/null 2>&1 || {
       echo "Download URL not accessible"
@@ -65,9 +65,9 @@ if command -v opencode >/dev/null 2>&1; then
       echo "Download failed"
       exit 1
     }
-    $VERBOSE && echo "Unzipping $FILENAME"
-    unzip -q "$FILENAME" || {
-      echo "Unzip failed"
+    $VERBOSE && echo "Untar $FILENAME"
+    tar xfz "$FILENAME" --extract "opencode" || {
+      echo "Untar failed"
       exit 1
     }
     $VERBOSE && echo "Installing to $INSTALL_DIR"
