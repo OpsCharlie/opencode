@@ -5,7 +5,7 @@
   hosts: localhost
   connection: local
   vars:
-    install_dir: "{{ ansible_user_dir }}/.local/bin"
+    bin_dir: "{{ ansible_user_dir }}/.local/bin"
     config_dir: "{{ ansible_user_dir }}/.config/opencode"
     icon_dir: "{{ ansible_user_dir }}/.local/share/icons"
     desktop_dir: "{{ ansible_user_dir }}/.local/share/applications"
@@ -34,7 +34,7 @@
 
     - name: Create installation directory
       ansible.builtin.file:
-        path: "{{ install_dir }}"
+        path: "{{ bin_dir }}"
         state: directory
         mode: '0750'
 
@@ -90,15 +90,15 @@
     - name: Install OpenCode binary
       ansible.builtin.copy:
         src: "{{ temp_dir.path }}/opencode"
-        dest: "{{ install_dir }}/opencode_{{ latest_version }}"
+        dest: "{{ bin_dir }}/opencode_{{ latest_version }}"
         mode: '0750'
         remote_src: true
       when: install_needed
 
     - name: Create symlink
       ansible.builtin.file:
-        src: "{{ install_dir }}/opencode_{{ latest_version }}"
-        dest: "{{ install_dir }}/opencode"
+        src: "{{ bin_dir }}/opencode_{{ latest_version }}"
+        dest: "{{ bin_dir }}/opencode"
         state: link
 
     - name: Clean up temporary directory
@@ -176,7 +176,7 @@
         content: |
           [Desktop Entry]
           Name=OpenCode
-          Exec={{ alacritty_path.stdout | default('/bin/bash') }} --command "{{ install_dir }}/opencode"
+          Exec={{ alacritty_path.stdout | default('/bin/bash') }} --command "{{ bin_dir }}/opencode"
           Icon={{ icon_dir }}/opencode.svg
           Type=Application
           Categories=Development;
