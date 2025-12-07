@@ -7,13 +7,22 @@
   vars:
     bin_dir: "{{ ansible_user_dir }}/.local/bin"
     config_dir: "{{ ansible_user_dir }}/.config/opencode"
-    icon_dir: "{{ ansible_user_dir }}/.local/share/icons"
+    icons_dir: "{{ ansible_user_dir }}/.local/share/icons"
     desktop_dir: "{{ ansible_user_dir }}/.local/share/applications"
     alacritty_config_dir: "{{ ansible_user_dir }}/.config/alacritty"
     alacritty_config_file: "{{ alacritty_config_dir }}/alacritty.toml"
     add_alacritty_config: true
     repo_url: "https://api.github.com/repos/sst/opencode/releases/latest"
     filename: "opencode-linux-x64.tar.gz"
+
+
+  handlers:
+    - name: Update desktop database
+      ansible.builtin.command:
+        cmd: update-desktop-database "{{ desktop_dir }}"
+      register: desktop_db_update
+      changed_when: desktop_db_update.rc == 0
+
 
   tasks:
     - name: Check required commands
@@ -32,11 +41,15 @@
       when: item.rc != 0
       loop: "{{ required_commands.results }}"
 
-    - name: Create installation directory
+    - name: Create directories
       ansible.builtin.file:
-        path: "{{ bin_dir }}"
+        path: "{{ item }}"
         state: directory
         mode: '0750'
+      loop:
+        - "{{ bin_dir }}"
+        - "{{ desktop_dir }}"
+        - "{{ icons_dir }}"
 
     - name: Fetch latest release information
       ansible.builtin.uri:
@@ -107,12 +120,6 @@
         state: absent
       when: install_needed
 
-    - name: Create OpenCode config directory
-      ansible.builtin.file:
-        path: "{{ config_dir }}"
-        state: directory
-        mode: '0750'
-
     - name: Create OpenCode configuration
       ansible.builtin.copy:
         content: |
@@ -129,16 +136,10 @@
         mode: '0640'
         backup: true
 
-    - name: Create icon directory
-      ansible.builtin.file:
-        path: "{{ icon_dir }}"
-        state: directory
-        mode: '0750'
-
     - name: Copy OpenCode icon
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/opencode.svg"
-        dest: "{{ icon_dir }}/opencode.svg"
+        dest: "{{ icons_dir }}/opencode.svg"
         mode: '0640'
 
     - name: Check if Alacritty is installed
@@ -165,20 +166,15 @@
         mode: '0640'
       when: alacritty_path.rc == 0 and add_alacritty_config
 
-    - name: Create desktop applications directory
-      ansible.builtin.file:
-        path: "{{ desktop_dir }}"
-        state: directory
-        mode: '0750'
-
     - name: Create desktop entry
       ansible.builtin.copy:
         content: |
           [Desktop Entry]
           Name=OpenCode
           Exec={{ alacritty_path.stdout | default('/bin/bash') }} --command "{{ bin_dir }}/opencode"
-          Icon={{ icon_dir }}/opencode.svg
+          Icon={{ icons_dir }}/opencode.svg
           Type=Application
           Categories=Development;
         dest: "{{ desktop_dir }}/opencode.desktop"
         mode: '0640'
+      notify: Update desktop database
