@@ -25,22 +25,6 @@
 
 
   tasks:
-    - name: Check required commands
-      ansible.builtin.command: "which {{ item }}"
-      register: required_commands
-      failed_when: false
-      changed_when: false
-      loop:
-        - jq
-        - curl
-        - tar
-
-    - name: Fail if required commands are missing
-      ansible.builtin.fail:
-        msg: "{{ item.item }} is required but not installed"
-      when: item.rc != 0
-      loop: "{{ required_commands.results }}"
-
     - name: Create directories
       ansible.builtin.file:
         path: "{{ item }}"
