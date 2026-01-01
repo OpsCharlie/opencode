@@ -21,7 +21,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 DIR=$(dirname "$(readlink -f "$0")")
-INSTALL_DIR="$HOME/bin"
+INSTALL_DIR="$HOME/.local/bin"
 FILENAME="opencode-linux-x64.tar.gz"
 URL=https://api.github.com/repos/sst/opencode/releases/latest
 CONFIG_DIR="$HOME/.config/opencode"
