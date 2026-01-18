@@ -23,7 +23,7 @@ done
 DIR=$(dirname "$(readlink -f "$0")")
 INSTALL_DIR="$HOME/.local/bin"
 FILENAME="opencode-linux-x64.tar.gz"
-URL=https://api.github.com/repos/sst/opencode/releases/latest
+URL=https://api.github.com/repos/anomalyco/opencode/releases/latest
 CONFIG_DIR="$HOME/.config/opencode"
 
 if ! command -v jq >/dev/null 2>&1; then
