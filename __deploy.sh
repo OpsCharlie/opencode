@@ -30,8 +30,8 @@ if ! command -v jq >/dev/null 2>&1; then
   echo "jq is required but not installed."
   exit 1
 fi
-if ! command -v unzip >/dev/null 2>&1; then
-  echo "unzip is required but not installed."
+if ! command -v tar >/dev/null 2>&1; then
+  echo "tar is required but not installed."
   exit 1
 fi
 
