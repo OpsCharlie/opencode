@@ -79,8 +79,6 @@ if command -v opencode >/dev/null 2>&1; then
       echo "Move failed"
       exit 1
     }
-    cd .. && rm -rf "$TEMP_DIR"
-
   else
     echo "Already at the latest version ($LATEST)"
   fi
