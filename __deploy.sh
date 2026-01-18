@@ -38,6 +38,11 @@ fi
 [[ -d "$INSTALL_DIR" ]] || mkdir -p "$INSTALL_DIR"
 
 LATEST=$(curl --fail --silent "$URL" | jq -r '.tag_name | sub("^v"; "")')
+DOWNLOAD_URL=$(curl --fail --silent "$URL" | jq -r ".assets[] | select(.name == \"$FILENAME\") | .browser_download_url")
+if [[ $? -ne 0 || -z "$LATEST" || -z "$DOWNLOAD_URL" ]]; then
+    echo "Failed to fetch version information"
+    exit 1
+fi
 if [[ $? -ne 0 || -z "$LATEST" ]]; then
   echo "Failed to fetch version information"
   exit 1
@@ -55,7 +60,6 @@ if command -v opencode >/dev/null 2>&1; then
     TEMP_DIR=$(mktemp -d)
     trap '[[ -d "$TEMP_DIR" ]] && rm -rf "$TEMP_DIR"' EXIT
     cd "$TEMP_DIR" || exit 1
-    DOWNLOAD_URL="https://github.com/sst/opencode/releases/latest/download/$FILENAME"
     $VERBOSE && echo "Downloading from $DOWNLOAD_URL"
     curl --head --fail "$DOWNLOAD_URL" > /dev/null 2>&1 || {
       echo "Download URL not accessible"
