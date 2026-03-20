@@ -25,6 +25,7 @@ INSTALL_DIR="$HOME/.local/bin"
 FILENAME="opencode-linux-x64.tar.gz"
 URL=https://api.github.com/repos/anomalyco/opencode/releases/latest
 CONFIG_DIR="$HOME/.config/opencode"
+COMMANDS_DIR="$CONFIG_DIR/commands"
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "jq is required but not installed."
@@ -85,6 +86,7 @@ if command -v opencode >/dev/null 2>&1; then
 fi
 
 [[ -d "$CONFIG_DIR" ]] || mkdir -p "$CONFIG_DIR"
+[[ -d "$COMMANDS_DIR" ]] || mkdir -p "$COMMANDS_DIR"
 if [[ -f "$CONFIG_DIR/opencode.json" ]]; then
   cp "$CONFIG_DIR/opencode.json" "$CONFIG_DIR/opencode.json.bak"
 fi
@@ -99,6 +101,8 @@ cat >"$CONFIG_DIR/opencode.json" <<-EOF
 	  }
 	}
 EOF
+
+cp -a "$DIR/commands/"*.md "$COMMANDS_DIR"
 
 ICON_DIR="$HOME/.local/share/icons"
 [[ -d "$ICON_DIR" ]] || mkdir -p "$ICON_DIR"
