@@ -9,6 +9,7 @@ an interactive CLI tool for software engineering tasks.
 - **Automatic Updates**: Downloads and installs the latest version of OpenCode from GitHub releases
 if a newer version is available.
 - **Configuration Setup**: Creates default configuration files for OpenCode.
+- **Global Commands**: Installs reusable OpenCode commands into the global config directory.
 - **Alacritty Integration**: Checks for Alacritty installation and optionally adds keyboard bindings (Shift+Enter for newline).
 - **Desktop Integration**: Creates a desktop entry for easy launching
 via Alacritty.
@@ -50,10 +51,11 @@ To prevent the script from modifying Alacritty configuration:
 1. **Version Check**: Fetches the latest release information from the OpenCode GitHub repository.
 2. **Download & Install**: If a newer version exists, downloads the Linux x64 ZIP and installs it to `~/bin/`.
 3. **OpenCode Config**: Creates `~/.config/opencode/opencode.json` with default settings including theme and keybindings.
-4. **Icon Installation**: Copies `opencode.svg` to `~/.local/share/icons/` for desktop integration.
-5. **Alacritty Config** (if enabled): Creates `~/.config/alacritty/alacritty.toml` with a keyboard binding
+4. **Global Commands**: Copies `commands/commitmsg.md` to `~/.config/opencode/commands/commitmsg.md`.
+5. **Icon Installation**: Copies `opencode.svg` to `~/.local/share/icons/` for desktop integration.
+6. **Alacritty Config** (if enabled): Creates `~/.config/alacritty/alacritty.toml` with a keyboard binding
 for Shift+Enter to insert newlines.
-6. **Desktop Entry**: Creates `~/.local/share/applications/opencode.desktop` for system menu integration.
+7. **Desktop Entry**: Creates `~/.local/share/applications/opencode.desktop` for system menu integration.
 
 <br>
 
@@ -64,6 +66,11 @@ for Shift+Enter to insert newlines.
 - Schema reference to OpenCode config
 - Theme set to "catppuccin"
 - Keybindings for input newline (Shift+Enter, Alt+Enter)
+
+### Global Commands (`~/.config/opencode/commands/`)
+
+- Installs `commitmsg.md` for the `/commitmsg` slash command
+- Makes the command available across repositories on your machine
 
 <br>
 
