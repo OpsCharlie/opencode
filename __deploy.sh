@@ -98,8 +98,13 @@ cat >"$CONFIG_DIR/opencode.json" <<-EOF
 	  "permission": {
 	    "bash": {
 	      "*": "ask",
+	      "cat *": "allow",
+	      "file *": "allow",
+	      "find *": "allow",
 	      "git *": "allow",
 	      "grep *": "allow",
+	      "head *": "allow",
+	      "ls *": "allow",
 	      "npx *": "allow",
 	      "ruff *": "allow",
 	      "shfmt *": "allow",
