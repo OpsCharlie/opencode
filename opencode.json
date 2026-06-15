@@ -1,0 +1,33 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "lsp": true,
+  "permission": {
+    "bash": {
+      "*": "ask",
+      "cat *": "allow",
+      "file *": "allow",
+      "find *": "allow",
+      "git *": "allow",
+      "grep *": "allow",
+      "head *": "allow",
+      "ls *": "allow",
+      "npx *": "allow",
+      "ruff *": "allow",
+      "shfmt *": "allow",
+      "prettier *": "allow",
+      "shellcheck *": "allow",
+      "ansible-lint *": "allow",
+      "stylua *": "allow",
+      "rm *": "ask",
+      "chmod *": "ask",
+      "dd *": "deny",
+      "mkfs*": "deny"
+    }
+  },
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}

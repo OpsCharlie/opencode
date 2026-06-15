@@ -82,58 +82,11 @@ fi
 
 [[ -d "$CONFIG_DIR" ]] || mkdir -p "$CONFIG_DIR"
 [[ -d "$COMMANDS_DIR" ]] || mkdir -p "$COMMANDS_DIR"
-if [[ -f "$CONFIG_DIR/opencode.json" ]]; then
-  cp "$CONFIG_DIR/opencode.json" "$CONFIG_DIR/opencode.json.bak"
-fi
-cat >"$CONFIG_DIR/opencode.json" <<-EOF
-	{
-	  "\$schema": "https://opencode.ai/config.json",
-	  "theme": "catppuccin",
-	  "keybinds": {
-	    "input_newline": "shift+enter,alt+enter",
-	    "messages_half_page_up": "ctrl+u",
-	    "messages_half_page_down": "ctrl+d"
-	  },
-	  "lsp": true,
-	  "permission": {
-	    "bash": {
-	      "*": "ask",
-	      "cat *": "allow",
-	      "file *": "allow",
-	      "find *": "allow",
-	      "git *": "allow",
-	      "grep *": "allow",
-	      "head *": "allow",
-	      "ls *": "allow",
-	      "npx *": "allow",
-	      "ruff *": "allow",
-	      "shfmt *": "allow",
-	      "prettier *": "allow",
-	      "shellcheck *": "allow",
-	      "ansible-lint *": "allow",
-	      "stylua *": "allow",
-	      "rm *": "ask",
-	      "chmod *": "ask",
-	      "dd *": "deny",
-	      "mkfs*": "deny"
-	    }
-	  },
-	  "mcp": {
-	    "context7": {
-	      "type": "remote",
-	      "url": "https://mcp.context7.com/mcp"
-	    },
-	    "sequential-thinking": {
-	      "type": "local",
-	      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
-	    },
-	    "memory": {
-	      "type": "local",
-	      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"]
-	    }
-	  }
-	}
-EOF
+
+for f in opencode.json tui.json AGENTS.md; do
+  [[ -f "$CONFIG_DIR/$f" ]] && cp "$CONFIG_DIR/$f" "$CONFIG_DIR/$f.bak"
+  cp "$DIR/$f" "$CONFIG_DIR/$f"
+done
 
 cp -a "$DIR/commands/"*.md "$COMMANDS_DIR"
 
