@@ -91,8 +91,14 @@ done
 cp -a "$DIR/commands/"*.md "$COMMANDS_DIR"
 
 ICON_DIR="$HOME/.local/share/icons"
+ICON_THEME_DIR="$ICON_DIR/hicolor/scalable/apps"
 [[ -d "$ICON_DIR" ]] || mkdir -p "$ICON_DIR"
+[[ -d "$ICON_THEME_DIR" ]] || mkdir -p "$ICON_THEME_DIR"
 cp "$DIR/opencode.svg" "$ICON_DIR/opencode.svg"
+cp "$DIR/opencode.svg" "$ICON_THEME_DIR/opencode.svg"
+gtk-update-icon-cache -f -t "$ICON_DIR/hicolor" >/dev/null 2>&1 || true
+# Drop GNOME Shell's stale icon cache so updated launcher icons are picked up
+rm -f "$HOME/.cache/icon-cache.kcache"
 
 if command -v alacritty >/dev/null 2>&1; then
   if "$ADD_ALACRITTY_CONFIG"; then
@@ -109,14 +115,27 @@ if command -v alacritty >/dev/null 2>&1; then
 fi
 
 ALACRITTY_PATH=$(which alacritty 2>/dev/null || echo "/usr/bin/alacritty")
+CHROME_PATH=$(which google-chrome 2>/dev/null || echo "/usr/bin/google-chrome")
+WEB_PORT=4096
 
 DESKTOP_DIR="$HOME/.local/share/applications"
 [[ -d "$DESKTOP_DIR" ]] || mkdir -p "$DESKTOP_DIR"
 cat >"$DESKTOP_DIR/opencode.desktop" <<-EOF
 	[Desktop Entry]
 	Name=OpenCode
-	Exec=$ALACRITTY_PATH --command "$INSTALL_DIR/opencode"
-	Icon=$HOME/.local/share/icons/opencode.svg
+	Exec=$ALACRITTY_PATH --class opencode --command "$INSTALL_DIR/opencode"
+	Icon=opencode
 	Type=Application
 	Categories=Development;
+	StartupWMClass=opencode
+EOF
+
+cat >"$DESKTOP_DIR/opencode-web.desktop" <<-EOF
+	[Desktop Entry]
+	Name=OpenCode Web
+	Exec=sh -c "$INSTALL_DIR/opencode serve --port $WEB_PORT & sleep 1.5; $CHROME_PATH --app=http://127.0.0.1:$WEB_PORT --class=opencode-web --ozone-platform=x11; kill %%1"
+	Icon=opencode
+	Type=Application
+	Categories=Development;
+	StartupWMClass=opencode-web
 EOF
