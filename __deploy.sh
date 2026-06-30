@@ -19,6 +19,7 @@ DIR=$(dirname "$(readlink -f "$0")")
 INSTALL_DIR="$HOME/.local/bin"
 CONFIG_DIR="$HOME/.config/opencode"
 COMMANDS_DIR="$CONFIG_DIR/commands"
+AGENTS_DIR="$CONFIG_DIR/agents"
 
 IS_ARCH=false
 if [[ -f /etc/os-release ]]; then
@@ -82,6 +83,7 @@ fi
 
 [[ -d "$CONFIG_DIR" ]] || mkdir -p "$CONFIG_DIR"
 [[ -d "$COMMANDS_DIR" ]] || mkdir -p "$COMMANDS_DIR"
+[[ -d "$AGENTS_DIR" ]] || mkdir -p "$AGENTS_DIR"
 
 for f in opencode.json tui.json AGENTS.md; do
   [[ -f "$CONFIG_DIR/$f" ]] && cp "$CONFIG_DIR/$f" "$CONFIG_DIR/$f.bak"
@@ -89,6 +91,7 @@ for f in opencode.json tui.json AGENTS.md; do
 done
 
 cp -a "$DIR/commands/"*.md "$COMMANDS_DIR"
+cp -a "$DIR/agents/"*.md "$AGENTS_DIR"
 
 ICON_DIR="$HOME/.local/share/icons"
 ICON_THEME_DIR="$ICON_DIR/hicolor/scalable/apps"
@@ -117,13 +120,13 @@ fi
 ALACRITTY_PATH=$(which alacritty 2>/dev/null || echo "/usr/bin/alacritty")
 CHROME_PATH=$(which google-chrome 2>/dev/null || echo "/usr/bin/google-chrome")
 WEB_PORT=4096
-
+OPENCODE="$(which opencode)"
 DESKTOP_DIR="$HOME/.local/share/applications"
 [[ -d "$DESKTOP_DIR" ]] || mkdir -p "$DESKTOP_DIR"
 cat >"$DESKTOP_DIR/opencode.desktop" <<-EOF
 	[Desktop Entry]
 	Name=OpenCode
-	Exec=$ALACRITTY_PATH --class opencode --command "$INSTALL_DIR/opencode"
+	Exec=$ALACRITTY_PATH --class opencode --command "$OPENCODE"
 	Icon=opencode
 	Type=Application
 	Categories=Development;
@@ -133,7 +136,7 @@ EOF
 cat >"$DESKTOP_DIR/opencode-web.desktop" <<-EOF
 	[Desktop Entry]
 	Name=OpenCode Web
-	Exec=sh -c "$INSTALL_DIR/opencode serve --port $WEB_PORT & sleep 1.5; $CHROME_PATH --app=http://127.0.0.1:$WEB_PORT --class=opencode-web --ozone-platform=x11; kill %%1"
+	Exec=sh -c "$OPENCODE serve --port $WEB_PORT & sleep 1; $CHROME_PATH --app=http://127.0.0.1:$WEB_PORT --class=opencode-web --ozone-platform=x11; kill %%1"
 	Icon=opencode
 	Type=Application
 	Categories=Development;
