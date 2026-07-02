@@ -1,0 +1,4 @@
+{
+  // Line-length is impractical for wide reference tables (model/pricing matrices).
+  "MD013": false
+}

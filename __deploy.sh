@@ -85,7 +85,7 @@ fi
 [[ -d "$COMMANDS_DIR" ]] || mkdir -p "$COMMANDS_DIR"
 [[ -d "$AGENTS_DIR" ]] || mkdir -p "$AGENTS_DIR"
 
-for f in opencode.json tui.json AGENTS.md; do
+for f in opencode.json tui.json AGENTS.md README_copilot_models.md; do
   [[ -f "$CONFIG_DIR/$f" ]] && cp "$CONFIG_DIR/$f" "$CONFIG_DIR/$f.bak"
   cp "$DIR/$f" "$CONFIG_DIR/$f"
 done
