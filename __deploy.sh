@@ -136,7 +136,7 @@ EOF
 cat >"$DESKTOP_DIR/opencode-web.desktop" <<-EOF
 	[Desktop Entry]
 	Name=OpenCode Web
-	Exec=sh -c "$OPENCODE serve --port $WEB_PORT & sleep 1; $CHROME_PATH --app=http://127.0.0.1:$WEB_PORT --class=opencode-web --ozone-platform=x11; kill %%1"
+	Exec=zsh -c "$OPENCODE serve --port $WEB_PORT & sleep 1; $CHROME_PATH --app=http://127.0.0.1:$WEB_PORT --class=opencode-web --ozone-platform=x11; kill %%1"
 	Icon=opencode
 	Type=Application
 	Categories=Development;

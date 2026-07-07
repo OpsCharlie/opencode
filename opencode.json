@@ -4,25 +4,16 @@
   "permission": {
     "atlassian_*": "deny",
     "bash": {
-      "*": "ask",
-      "cat *": "allow",
-      "file *": "allow",
-      "find *": "allow",
-      "git *": "allow",
-      "grep *": "allow",
-      "head *": "allow",
-      "ls *": "allow",
-      "npx *": "allow",
-      "ruff *": "allow",
-      "shfmt *": "allow",
-      "prettier *": "allow",
-      "shellcheck *": "allow",
-      "ansible-lint *": "allow",
-      "stylua *": "allow",
+      "*": "allow",
       "rm *": "ask",
+      "rmdir *": "ask",
       "chmod *": "ask",
+      "chown *": "ask",
+      "mv *": "ask",
       "dd *": "deny",
-      "mkfs*": "deny"
+      "mkfs*": "deny",
+      "sudo *": "ask",
+      "> /dev/*": "deny"
     }
   },
   "mcp": {
@@ -31,9 +22,31 @@
       "url": "https://mcp.context7.com/mcp"
     },
     "atlassian": {
+      "enabled": false,
       "type": "remote",
       "url": "https://mcp.atlassian.com/v1/mcp/authv2",
       "oauth": {}
+    },
+    "zabbix": {
+      "enabled": false,
+      "type": "local",
+      "command": [
+        "podman",
+        "run",
+        "-i",
+        "--rm",
+        "--log-driver=none",
+        "-e", "ZABBIX_MCP_TRANSPORT=stdio",
+        "-e", "ZABBIX_URL",
+        "-e", "ZABBIX_TOKEN",
+        "-e", "VERIFY_SSL",
+        "localhost/zabbix-mcp-server"
+      ],
+      "environment": {
+        "ZABBIX_URL": "https://zabbix3prod.sofico.be/zabbix/",
+        "ZABBIX_TOKEN": "{env:ZABBIX_TOKEN}",
+        "VERIFY_SSL": "false"
+      }
     }
   }
 }

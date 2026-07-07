@@ -6,7 +6,7 @@ agent: plan
 Select the best GitHub Copilot model for the current session context and user request.
 
 Instructions:
-- Use `README_copilot_models.md` as the source of truth.
+- Use `/home/cave/.config/opencode/README_copilot_models.md` as the source of truth.
 - Infer the task type from this session's context (current request, files touched, and objective).
 - Map the request to one of these categories: general-purpose coding/writing, fast/repetitive work, deep reasoning/debugging, multimodal/visual, or agentic multi-step workflows.
 - If the request is ambiguous, provide both a primary and fallback model.
