@@ -20,6 +20,7 @@ INSTALL_DIR="$HOME/.local/bin"
 CONFIG_DIR="$HOME/.config/opencode"
 COMMANDS_DIR="$CONFIG_DIR/commands"
 AGENTS_DIR="$CONFIG_DIR/agents"
+SKILLS_DIR="$CONFIG_DIR/skills"
 
 IS_ARCH=false
 if [[ -f /etc/os-release ]]; then
@@ -84,6 +85,7 @@ fi
 [[ -d "$CONFIG_DIR" ]] || mkdir -p "$CONFIG_DIR"
 [[ -d "$COMMANDS_DIR" ]] || mkdir -p "$COMMANDS_DIR"
 [[ -d "$AGENTS_DIR" ]] || mkdir -p "$AGENTS_DIR"
+[[ -d "$SKILLS_DIR" ]] || mkdir -p "$SKILLS_DIR"
 
 for f in opencode.json tui.json AGENTS.md README_copilot_models.md; do
   [[ -f "$CONFIG_DIR/$f" ]] && cp "$CONFIG_DIR/$f" "$CONFIG_DIR/$f.bak"
@@ -92,6 +94,14 @@ done
 
 cp -a "$DIR/commands/"*.md "$COMMANDS_DIR"
 cp -a "$DIR/agents/"*.md "$AGENTS_DIR"
+
+for skill_dir in "$DIR/skills/"*/; do
+  [[ -d "$skill_dir" ]] || continue
+  name=$(basename "$skill_dir")
+  [[ -f "$skill_dir/SKILL.md" ]] || continue
+  [[ -d "$SKILLS_DIR/$name" ]] || mkdir -p "$SKILLS_DIR/$name"
+  cp -a "$skill_dir/SKILL.md" "$SKILLS_DIR/$name/SKILL.md"
+done
 
 ICON_DIR="$HOME/.local/share/icons"
 ICON_THEME_DIR="$ICON_DIR/hicolor/scalable/apps"
