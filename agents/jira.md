@@ -2,7 +2,7 @@
 description: Atlassian Jira/Confluence work via the Atlassian MCP
 mode: primary
 permission:
-  atlassian_*: allow
+  "atlassian_*": allow
 ---
 
 You handle Atlassian Jira and Confluence tasks using the Atlassian MCP tools.

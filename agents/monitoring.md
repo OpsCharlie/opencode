@@ -5,10 +5,10 @@ permission:
   bash: allow
   read: allow
   edit: allow
-  atlassian_*: allow
-  zabbix_*: allow
-  grafana_*: allow
-  elk_*: allow
+  "atlassian_*": allow
+  "zabbix_*": allow
+  "grafana_*": allow
+  "elk_*": allow
 ---
 
 You handle monitoring infrastructure including Zabbix, Grafana, and Elastic/Kibana.

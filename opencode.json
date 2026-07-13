@@ -1,6 +1,5 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["@tarquinen/opencode-smart-title"],
   "lsp": true,
   "permission": {
     "atlassian_*": "deny",
@@ -45,8 +44,51 @@
       ],
       "environment": {
         "ZABBIX_URL": "https://zabbix3prod.sofico.be/zabbix/",
-        "ZABBIX_TOKEN": "{env:ZABBIX_TOKEN}",
+        "ZABBIX_TOKEN": "{file:/home/cave/.local/secrets/zabbix_token}",
         "VERIFY_SSL": "false"
+      }
+    },
+    "elk": {
+      "enabled": false,
+      "type": "local",
+      "command": [
+        "podman",
+        "run",
+        "-i",
+        "--rm",
+        "--network=host",
+        "--log-driver=none",
+        "-e", "ES_URL",
+        "-e", "ES_API_KEY",
+        "-e", "ES_SSL_SKIP_VERIFY",
+        "docker.elastic.co/mcp/elasticsearch",
+        "stdio"
+      ],
+      "environment": {
+        "ES_URL": "https://127.0.0.1:9200",
+        "ES_API_KEY": "{file:/home/cave/.local/secrets/elk_token}",
+        "ES_SSL_SKIP_VERIFY": "true"
+      }
+    },
+    "foreman": {
+      "enabled": false,
+      "type": "local",
+      "command": [
+        "podman",
+        "run",
+        "-i",
+        "--rm",
+        "--log-driver=none",
+        "-e", "FOREMAN_USERNAME",
+        "-e", "FOREMAN_PASSWORD",
+        "quay.io/foreman/foreman-mcp-server:latest",
+        "--transport", "stdio",
+        "--foreman-url", "https://ssbforeman.sofico.be/",
+        "--no-verify-ssl"
+      ],
+      "environment": {
+        "FOREMAN_USERNAME": "{file:/home/cave/.local/secrets/foreman_username}",
+        "FOREMAN_PASSWORD": "{file:/home/cave/.local/secrets/foreman_token}"
       }
     }
   }

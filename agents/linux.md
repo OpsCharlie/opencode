@@ -7,6 +7,8 @@ permission:
   edit: allow
   glob: allow
   grep: allow
+  "zabbix_*": allow
+  "elk_*": allow
 ---
 
 You handle general Linux system administration tasks including troubleshooting, shell scripting, and infrastructure management.
