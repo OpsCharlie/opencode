@@ -41,6 +41,8 @@ BEFORE claiming any status or expressing satisfaction:
 | Linter clean | Linter output: 0 errors | Partial check, extrapolation |
 | Build succeeds | Build command: exit 0 | Linter passing, logs look good |
 | Bug fixed | Test original symptom: passes | Code changed, assumed fixed |
+| Shell scripts clean | `shellcheck <script>`: 0 issues | Manual trial execution only |
+| Ansible roles clean | `ansible-lint <file/folder>`: 0 issues | Syntax check only |
 
 ## Red Flags - STOP
 
@@ -67,7 +69,20 @@ WRONG: "Linter passed" (linter doesn't check compilation)
 **Requirements:**
 ```
 RIGHT: Re-read plan → Create checklist → Verify each → Report gaps or completion
+...
 WRONG: "Tests pass, phase complete"
+```
+
+**Shell Scripts:**
+```
+RIGHT: [Run shellcheck script.sh] [See: exit 0 / no violations] "Shellcheck passed"
+WRONG: "It runs fine on my machine" (ignores potential edge cases or warnings)
+```
+
+**Ansible Playbooks & Roles:**
+```
+RIGHT: [Run ansible-lint roles/my_role] [See: 0 issues] "Ansible-lint passes with 0 violations"
+WRONG: "Ansible syntax check passed"
 ```
 
 ## The Bottom Line

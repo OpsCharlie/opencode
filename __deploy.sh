@@ -17,6 +17,7 @@ done
 
 DIR=$(dirname "$(readlink -f "$0")")
 OPENCODE_BIN="$HOME/.opencode/bin/opencode"
+SECRETS_DIR="$HOME/.local/secrets"
 CONFIG_DIR="$HOME/.config/opencode"
 COMMANDS_DIR="$CONFIG_DIR/commands"
 AGENTS_DIR="$CONFIG_DIR/agents"
@@ -31,6 +32,7 @@ for f in opencode.json tui.json AGENTS.md README_copilot_models.md; do
   [[ -f "$CONFIG_DIR/$f" ]] && cp "$CONFIG_DIR/$f" "$CONFIG_DIR/$f.bak"
   cp "$DIR/$f" "$CONFIG_DIR/$f"
 done
+sed -i "s|SECRETSDIR|$SECRETS_DIR|g" "$CONFIG_DIR/opencode.json"
 
 cp -a "$DIR/commands/"*.md "$COMMANDS_DIR"
 cp -a "$DIR/agents/"*.md "$AGENTS_DIR"

@@ -15,6 +15,14 @@ description: Zabbix monitoring setup including templates, items, triggers, and A
 
 Use this skill when working with Zabbix monitoring configuration, templates, or API calls. Activate when the user mentions zabbix, monitoring, template, trigger, item, or alert.
 
+## Connection test
+
+```json
+{
+  "method": "apiinfo.version"
+}
+```
+
 ## Patterns
 
 ### Template structure
@@ -43,22 +51,189 @@ proc.num[nginx]
 log[/var/log/nginx/error.log]
 ```
 
-### API usage pattern
-```python
-import requests
+### API usage via MCP
 
-url = "http://zabbix/api_jsonrpc.php"
-payload = {
-    "jsonrpc": "2.0",
-    "method": "host.get",
-    "params": {
-        "output": ["hostid", "host"],
-        "filter": {"host": ["myhost"]}
-    },
-    "auth": token,
-    "id": 1
+When the Zabbix MCP is enabled, always use the `zabbix_zabbix_api` tool rather than writing raw Python scripts:
+
+#### Get Zabbix version
+```json
+{
+  "method": "apiinfo.version"
 }
-response = requests.post(url, json=payload).json()
+```
+
+#### Find host by name
+```json
+{
+  "method": "host.get",
+  "params": {
+    "output": ["hostid", "host", "name"],
+    "filter": {"host": ["myhost"]}
+  }
+}
+```
+
+#### Get active problems/alerts
+```json
+{
+  "method": "problem.get",
+  "params": {
+    "output": ["eventid", "name", "severity", "clock"],
+    "selectAcknowledges": "extend",
+    "recent": true,
+    "sortfield": ["eventid"],
+    "sortorder": "DESC"
+  }
+}
+```
+
+#### Get latest metric values for a host
+```json
+{
+  "method": "item.get",
+  "params": {
+    "output": ["itemid", "name", "key_", "lastvalue", "lastclock"],
+    "hostids": "10001",
+    "search": {
+      "key_": ["system.cpu.util", "vm.memory.size", "vfs.fs.size"]
+    },
+    "searchByAny": true
+  }
+}
+```
+
+#### Get host groups
+```json
+{
+  "method": "hostgroup.get",
+  "params": {
+    "output": ["groupid", "name"]
+  }
+}
+```
+
+#### Get templates
+```json
+{
+  "method": "template.get",
+  "params": {
+    "output": ["templateid", "host"],
+    "filter": {"host": ["App - MyService"]}
+  }
+}
+```
+
+#### Create a host
+```json
+{
+  "method": "host.create",
+  "params": {
+    "host": "myhost.example.com",
+    "groups": [{"groupid": "12"}],
+    "templates": [{"templateid": "10001"}],
+    "interfaces": [{
+      "type": 1,
+      "main": 1,
+      "useip": 1,
+      "ip": "192.168.1.100",
+      "dns": "myhost.example.com",
+      "port": "10050"
+    }]
+  }
+}
+```
+
+### Macros
+
+Macros allow template parameterization. Use `{$MACRO}` in items, triggers, and prototypes.
+
+#### User macros (set per host/template)
+```json
+{
+  "method": "usermacro.create",
+  "params": {
+    "hostid": "10001",
+    "macro": "{$SERVICE_URL}",
+    "value": "https://api.example.com"
+  }
+}
+```
+
+#### Common macro patterns
+```
+{$SERVICE_URL}:     https://api.example.com
+{$SERVICE_PORT}:    443
+{$SERVICE_TIMEOUT}: 30
+{$DISK_LOW}:        10
+{$CPU_HIGH}:        90
+```
+
+#### Using macros in triggers
+```
+# Threshold macros
+last(/Template/service.status)<>0
+
+# Macro in trigger name
+Service {$SERVICE_URL} is down on {HOST.NAME}
+
+# Macro in thresholds
+avg(/Template/system.cpu.util,5m>{$CPU_HIGH}
+```
+
+### Low Level Discovery (LLD)
+
+LLD automatically creates items, triggers, and graphs for dynamic resources (interfaces, disks, services, etc.).
+
+#### LLD macro patterns
+```
+{#IFNAME}      - Interface name (eth0, eth1)
+{#IFSTATUS}    - Interface operational status
+{#DISKNAME}    - Disk name (sda, sdb)
+{#FSNAME}      - Filesystem mount point
+{#SNMPINDEX}   - SNMP index
+```
+
+#### Create a discovery rule
+```json
+{
+  "method": "discoveryrule.create",
+  "params": {
+    "hostid": "10001",
+    "name": "Network interfaces",
+    "key_": "net.if.discovery",
+    "type": 0,
+    "delay": "1h",
+    "lifetime": "30d"
+  }
+}
+```
+
+#### Create a prototype item (LLD prototype)
+```json
+{
+  "method": "itemprototype.create",
+  "params": {
+    "discoveryid": "10002",
+    "name": "Traffic on {#IFNAME}",
+    "key_": "net.if.in[{#IFNAME}]",
+    "type": 0,
+    "delay": "30s",
+    "value_type": 3
+  }
+}
+```
+
+#### Create a prototype trigger
+```json
+{
+  "method": "triggerprototype.create",
+  "params": {
+    "discoveryid": "10002",
+    "description": "Interface {#IFNAME} is down",
+    "expression": "last(/Host/net.if.status[{#IFNAME}])=0",
+    "priority": 3
+  }
+}
 ```
 
 ### Trigger expressions
@@ -74,6 +249,12 @@ last(/Template/vfs.fs.size[/,pfree])<10
 
 # Log pattern match
 find(/Template/log[/var/log/app.log],,"regexp","ERROR")>0
+
+# Host macro threshold
+avg(/Template/system.cpu.util,5m)>{$CPU_HIGH}
+
+# Multiple conditions
+last(/Template/net.if.status[eth0])=0 and avg(/Template/net.if.in[eth0],5m)>0
 ```
 
 ### Best practices
@@ -83,3 +264,4 @@ find(/Template/log[/var/log/app.log],,"regexp","ERROR")>0
 - Set appropriate update intervals (don't poll too frequently)
 - Use macros for template parameterization
 - Group related items in application groups
+- Use `searchByAny: true` when searching across multiple key patterns

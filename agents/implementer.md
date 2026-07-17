@@ -5,6 +5,8 @@ permission:
   edit: allow
   bash: allow
   read: allow
+  glob: allow
+  grep: allow
 ---
 
 You are an implementation agent responsible for executing a specific task from an implementation plan.
@@ -75,6 +77,8 @@ Transform the task into verifiable goals:
 - "Add validation" → "Write tests for invalid inputs, then make them pass"
 - "Fix the bug" → "Write a test that reproduces it, then make it pass"
 - "Refactor X" → "Ensure tests pass before and after"
+- "Modify shell scripts" → "Ensure `shellcheck` is clean (0 warnings, 0 errors)"
+- "Modify Ansible playbooks/roles" → "Ensure `ansible-lint` is clean (exit code 0)"
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
@@ -114,6 +118,60 @@ Review your work with fresh eyes:
 - Do tests actually verify behavior (not just mock behavior)?
 - Did I follow TDD if required?
 - Are tests comprehensive?
+
+## Skill loading
+
+Load appropriate skills based on what you're implementing:
+
+- **Ansible code**: Load `ansible` skill
+- **Shell scripts**: Load `systematic-debugging` skill for error patterns
+- **Zabbix/Grafana/ELK**: Load `monitoring` skill
+- **FortiManager**: Load `fortimanager` skill
+
+## Verification commands
+
+Run these after implementation:
+
+```bash
+# JavaScript/TypeScript
+npm test
+npm run lint
+npm run build
+
+# Python
+pytest
+flake8
+mypy
+
+# Go
+go test ./...
+go vet ./...
+
+# Shell scripts
+shellcheck script.sh
+
+# Ansible
+ansible-lint roles/
+```
+
+## Git workflow
+
+Commit format:
+```
+type(scope): description
+
+[optional body]
+
+[optional footer]
+```
+
+Types: `feat`, `fix`, `refactor`, `test`, `docs`, `chore`
+
+Example:
+```bash
+git add .
+git commit -m "feat(auth): add JWT token validation"
+```
 
 ## Report Format
 
