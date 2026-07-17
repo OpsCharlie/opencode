@@ -7,6 +7,15 @@ permission:
     "ansible*": allow
     "ansible-lint*": allow
     "molecule*": allow
+    "rm *": ask
+    "rmdir *": ask
+    "chmod *": ask
+    "chown *": ask
+    "mv *": ask
+    "dd *": deny
+    "mkfs*": deny
+    "sudo *": ask
+    "> /dev/*": deny
   edit: allow
   read: allow
   glob: allow

@@ -2,7 +2,17 @@
 description: General Linux system administration, troubleshooting, and shell scripting
 mode: primary
 permission:
-  bash: allow
+  bash:
+    "*": allow
+    "rm *": ask
+    "rmdir *": ask
+    "chmod *": ask
+    "chown *": ask
+    "mv *": ask
+    "dd *": deny
+    "mkfs*": deny
+    "sudo *": ask
+    "> /dev/*": deny
   read: allow
   edit: allow
   glob: allow
