@@ -44,7 +44,7 @@
       ],
       "environment": {
         "ZABBIX_URL": "https://zabbix3prod.sofico.be/zabbix/",
-        "ZABBIX_TOKEN": "{file:/home/cave/.local/secrets/zabbix_token}",
+        "ZABBIX_TOKEN": "{file:HOME/.local/secrets/zabbix_token}",
         "VERIFY_SSL": "false"
       }
     },
@@ -66,7 +66,7 @@
       ],
       "environment": {
         "ES_URL": "https://127.0.0.1:9200",
-        "ES_API_KEY": "{file:/home/cave/.local/secrets/elk_token}",
+        "ES_API_KEY": "{file:HOME/.local/secrets/elk_token}",
         "ES_SSL_SKIP_VERIFY": "true"
       }
     },
@@ -87,8 +87,8 @@
         "--no-verify-ssl"
       ],
       "environment": {
-        "FOREMAN_USERNAME": "{file:/home/cave/.local/secrets/foreman_username}",
-        "FOREMAN_PASSWORD": "{file:/home/cave/.local/secrets/foreman_token}"
+        "FOREMAN_USERNAME": "{file:HOME/.local/secrets/foreman_username}",
+        "FOREMAN_PASSWORD": "{file:HOME/.local/secrets/foreman_token}"
       }
     }
   }

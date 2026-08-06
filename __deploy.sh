@@ -31,6 +31,7 @@ for f in opencode.json tui.json AGENTS.md README_copilot_models.md; do
   [[ -f "$CONFIG_DIR/$f" ]] && cp "$CONFIG_DIR/$f" "$CONFIG_DIR/$f.bak"
   cp "$DIR/$f" "$CONFIG_DIR/$f"
 done
+sed -i "s|HOME|$HOME|g" "$CONFIG_DIR/opencode.json"
 
 cp -a "$DIR/commands/"*.md "$COMMANDS_DIR"
 cp -a "$DIR/agents/"*.md "$AGENTS_DIR"
