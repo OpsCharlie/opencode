@@ -2,7 +2,6 @@
 description: General Linux system administration, troubleshooting, and shell scripting
 mode: primary
 permission:
-  bash: allow
   read: allow
   edit: allow
   glob: allow

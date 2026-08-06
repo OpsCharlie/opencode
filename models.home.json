@@ -1,0 +1,25 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "opencode/big-pickle",
+  "small_model": "opencode/deepseek-v4-flash-free",
+  "agent": {
+    "plan": {
+      "model": "opencode/big-pickle"
+    },
+    "build": {
+      "model": "opencode/big-pickle"
+    },
+    "explore": {
+      "model": "opencode/deepseek-v4-flash-free"
+    },
+    "implementer": {
+      "model": "opencode/big-pickle"
+    },
+    "code-reviewer": {
+      "model": "opencode/big-pickle"
+    },
+    "spec-reviewer": {
+      "model": "opencode/big-pickle"
+    }
+  }
+}

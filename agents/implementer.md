@@ -3,7 +3,6 @@ description: Subagent for implementing plan tasks with TDD, self-review, and sta
 mode: subagent
 permission:
   edit: allow
-  bash: allow
   read: allow
 ---
 

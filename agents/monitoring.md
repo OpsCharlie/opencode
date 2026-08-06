@@ -2,7 +2,6 @@
 description: Monitoring setup and management for Zabbix, Grafana, and Elastic/Kibana
 mode: primary
 permission:
-  bash: allow
   read: allow
   edit: allow
   "atlassian_*": allow

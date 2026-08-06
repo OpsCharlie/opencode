@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ADD_ALACRITTY_CONFIG=true
+PROFILE=""
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -8,12 +9,24 @@ while [[ $# -gt 0 ]]; do
     ADD_ALACRITTY_CONFIG=false
     shift
     ;;
+  --profile)
+    PROFILE="$2"
+    shift 2
+    ;;
   *)
     echo "Unknown option $1"
     exit 1
     ;;
   esac
 done
+
+case "$PROFILE" in
+home | work) ;;
+*)
+  echo "Error: --profile home|work is required"
+  exit 1
+  ;;
+esac
 
 DIR=$(dirname "$(readlink -f "$0")")
 OPENCODE_BIN="$HOME/.opencode/bin/opencode"
@@ -27,11 +40,18 @@ SKILLS_DIR="$CONFIG_DIR/skills"
 [[ -d "$AGENTS_DIR" ]] || mkdir -p "$AGENTS_DIR"
 [[ -d "$SKILLS_DIR" ]] || mkdir -p "$SKILLS_DIR"
 
-for f in opencode.json tui.json AGENTS.md README_copilot_models.md; do
+for f in tui.json AGENTS.md README_copilot_models.md; do
   [[ -f "$CONFIG_DIR/$f" ]] && cp "$CONFIG_DIR/$f" "$CONFIG_DIR/$f.bak"
   cp "$DIR/$f" "$CONFIG_DIR/$f"
 done
-sed -i "s|HOME|$HOME|g" "$CONFIG_DIR/opencode.json"
+command -v jq >/dev/null 2>&1 || {
+  echo "Error: jq is required"
+  exit 1
+}
+jq -s --arg home "$HOME" '
+  .[0] * .[1]
+  | walk(if type == "string" then gsub("HOME/"; $home + "/") else . end)
+' "$DIR/opencode_template.json" "$DIR/models.$PROFILE.json" > "$CONFIG_DIR/opencode.json"
 
 cp -a "$DIR/commands/"*.md "$COMMANDS_DIR"
 cp -a "$DIR/agents/"*.md "$AGENTS_DIR"

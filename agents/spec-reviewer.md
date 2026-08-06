@@ -4,7 +4,6 @@ mode: subagent
 permission:
   edit: deny
   read: allow
-  bash: allow
 ---
 
 You are reviewing whether an implementation matches its specification.

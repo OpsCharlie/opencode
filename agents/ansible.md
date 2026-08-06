@@ -2,11 +2,6 @@
 description: Ansible playbook and role development for Linux infrastructure automation
 mode: primary
 permission:
-  bash:
-    "*": allow
-    "ansible*": allow
-    "ansible-lint*": allow
-    "molecule*": allow
   edit: allow
   read: allow
 ---
