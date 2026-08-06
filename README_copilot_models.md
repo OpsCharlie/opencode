@@ -149,6 +149,13 @@ Parse the pages for:
 
 Update README_copilot_models.md preserving the top-level structure (Overview, Models table, Quick recommendations by task, Examples, Availability & billing, Updater prompt).
 Add or remove models as the docs indicate, mark retiring models with the retirement date, and update examples if new capabilities (e.g., multimodal image input) are advertised.
+
+After updating the README, regenerate models.work.json from the new model list:
+- Map the Quick recommendations by task onto the fixed roles: `plan` -> deep reasoning/debugging (e.g. Claude Opus), `build`/`implementer`/`code-reviewer`/`spec-reviewer` -> general-purpose coding (e.g. Claude Sonnet), `explore` and `small_model` -> fast/lightweight (e.g. Claude Haiku / GPT-5 mini).
+- Use opencode copilot provider IDs (`copilot/<id>`), matching the Model column of the Models table.
+- Preserve the file structure: `$schema`, `model`, `small_model`, and `agent` keys for `plan`, `build`, `explore`, `implementer`, `code-reviewer`, `spec-reviewer`.
+- Verify exact `copilot/<id>` spellings with `opencode models copilot` if available.
+
 Fix markdownlint issues in README_copilot_models.md
 ```
 
