@@ -44,13 +44,8 @@
         "localhost/zabbix-mcp-server"
       ],
       "environment": {
-<<<<<<<< HEAD:opencode_template.json
-        "ZABBIX_URL": "https://zabbix3prod.sofico.be/zabbix/",
+        "ZABBIX_URL": "{file:HOME/.local/secrets/zabbix_url}",
         "ZABBIX_TOKEN": "{file:HOME/.local/secrets/zabbix_token}",
-========
-        "ZABBIX_URL": "{file:SECRETSDIR/zabbix_url}",
-        "ZABBIX_TOKEN": "{file:SECRETSDIR/zabbix_token}",
->>>>>>>> master:opencode.json.src
         "VERIFY_SSL": "false"
       }
     },
@@ -71,13 +66,8 @@
         "stdio"
       ],
       "environment": {
-<<<<<<<< HEAD:opencode_template.json
-        "ES_URL": "https://127.0.0.1:9200",
+        "ES_URL": "{file:HOME/.local/secrets/elk_url}",
         "ES_API_KEY": "{file:HOME/.local/secrets/elk_token}",
-========
-        "ES_URL": "{file:SECRETSDIR/elk_url}",
-        "ES_API_KEY": "{file:SECRETSDIR/elk_token}",
->>>>>>>> master:opencode.json.src
         "ES_SSL_SKIP_VERIFY": "true"
       }
     },
@@ -98,13 +88,9 @@
         "--no-verify-ssl"
       ],
       "environment": {
-<<<<<<<< HEAD:opencode_template.json
         "FOREMAN_USERNAME": "{file:HOME/.local/secrets/foreman_username}",
-        "FOREMAN_PASSWORD": "{file:HOME/.local/secrets/foreman_token}"
-========
-        "FOREMAN_USERNAME": "{file:SECRETSDIR/foreman_username}",
-        "FOREMAN_PASSWORD": "{file:SECRETSDIR/foreman_token}",
-        "FOREMAN_URL": "{file:SECRETSDIR/foreman_url}"
+        "FOREMAN_PASSWORD": "{file:HOME/.local/secrets/foreman_token}",
+        "FOREMAN_URL": "{file:HOME/.local/secrets/foreman_url}"
       }
     },
     "fortimanager": {
@@ -124,12 +110,11 @@
         "ghcr.io/rstierli/fortimanager-mcp:latest"
       ],
       "environment": {
-        "FORTIMANAGER_HOST": "{file:SECRETSDIR/fortimanager_host}",
-        "FORTIMANAGER_API_TOKEN": "{file:SECRETSDIR/fortimanager_token}",
+        "FORTIMANAGER_HOST": "{file:HOME/.local/secrets/fortimanager_host}",
+        "FORTIMANAGER_API_TOKEN": "{file:HOME/.local/secrets/fortimanager_token}",
         "FORTIMANAGER_VERIFY_SSL": "false",
         "MCP_SERVER_MODE": "stdio",
         "FMG_TOOL_MODE": "dynamic"
->>>>>>>> master:opencode.json.src
       }
     }
   }
