@@ -28,6 +28,13 @@ home | work) ;;
   ;;
 esac
 
+DESKTOP_APP_IMAGE="$HOME/.local/bin/opencode-desktop.AppImage"
+case "$(uname -m)" in
+  x86_64) DESKTOP_APP_ARCH="x86_64" ;;
+  arm64 | aarch64) DESKTOP_APP_ARCH="arm64" ;;
+  *) DESKTOP_APP_ARCH="x86_64" ;;
+esac
+
 DIR=$(dirname "$(readlink -f "$0")")
 OPENCODE_BIN="$HOME/.opencode/bin/opencode"
 CONFIG_DIR="$HOME/.config/opencode"
@@ -88,6 +95,16 @@ if command -v alacritty >/dev/null 2>&1; then
   fi
 fi
 
+if [[ ! -f "$DESKTOP_APP_IMAGE" ]]; then
+  echo "Downloading OpenCode desktop AppImage..."
+  curl -# -L -o "$DESKTOP_APP_IMAGE" \
+    "https://github.com/anomalyco/opencode/releases/latest/download/opencode-desktop-linux-$DESKTOP_APP_ARCH.AppImage" || {
+      echo "Download failed"
+      exit 1
+    }
+  chmod +x "$DESKTOP_APP_IMAGE"
+fi
+
 ALACRITTY_PATH=$(which alacritty 2>/dev/null || echo "/usr/bin/alacritty")
 CHROME_PATH=$(which google-chrome 2>/dev/null || echo "/usr/bin/google-chrome")
 WEB_PORT=4096
@@ -101,6 +118,16 @@ cat >"$DESKTOP_DIR/opencode.desktop" <<-EOF
 	Type=Application
 	Categories=Development;
 	StartupWMClass=opencode
+EOF
+
+cat >"$DESKTOP_DIR/opencode-desktop.desktop" <<-EOF
+	[Desktop Entry]
+	Name=OpenCode Desktop
+	Exec=$DESKTOP_APP_IMAGE
+	Icon=opencode
+	Type=Application
+	Categories=Development;
+	StartupWMClass=ai.opencode.desktop
 EOF
 
 cat >"$DESKTOP_DIR/opencode-web.desktop" <<-EOF
