@@ -1,69 +1,200 @@
 ---
 name: foreman
-description: Foreman host provisioning, content management, and lifecycle management
+description: Foreman content management, lifecycle environments, and host metadata querying
 ---
+
+# Foreman
 
 ## What I do
 
-- Manage host provisioning and registration
 - Configure content views, lifecycle environments, and content credentials
-- Manage kickstart and PXE boot templates
 - Work with host groups, parameters, and Puppet/Ansible integration
-- Use Hammer CLI for automation
+- Use Foreman REST API for host audits, package lists, errata, and querying
 
 ## When to use me
 
-Use this skill when working with Foreman, Katello, or Red Hat Satellite host provisioning and content management. Activate when the user mentions foreman, katello, satellite, provisioning, or host group.
+Use this skill when working with Foreman, Katello, or Red Hat Satellite host metadata, lifecycle environments, or content management. Activate when the user mentions foreman, katello, satellite, errata, packages, or host group.
+
+## Connection test
+
+```json
+{
+  "resource": "ping",
+  "action": "index",
+  "params": {}
+}
+```
 
 ## Patterns
 
-### Hammer CLI commands
-```bash
-# List hosts
-hammer host list --search "status = active"
+### Foreman MCP Tool Usage (Preferred)
 
-# Create host
-hammer host create \
-  --name myhost \
-  --organization "MyOrg" \
-  --location "MyLocation" \
-  --hostgroup "RHEL8-Baseline" \
-  --mac 00:11:22:33:44:55 \
-  --build true
+When the Foreman MCP is enabled, always use the built-in `foreman_call_foreman_api_get` tool rather than writing raw Python scripts:
 
-# Update host parameters
-hammer host set-parameter --host myhost --name parameter-name --value parameter-value
+#### 1. List active hosts
 
-# Content view management
-hammer content-view list
-hammer content-view publish --name "My ContentView"
-hammer content-view version promote --name "My ContentView" --version 1 --to-lifecycle-environment "Production"
+```json
+{
+  "resource": "hosts",
+  "action": "index",
+  "params": {
+    "search": "status = active"
+  }
+}
+```
+
+#### 2. Show host parameters (including inherited parameters)
+
+```json
+{
+  "resource": "hosts",
+  "action": "show",
+  "params": {
+    "id": "myhost.example.com"
+  }
+}
+```
+
+#### 3. Get host facts (reported from systems, e.g. kernel, CPUs)
+
+```json
+{
+  "resource": "fact_values",
+  "action": "index",
+  "params": {
+    "search": "host = myhost.example.com"
+  }
+}
+```
+
+#### 4. List installed packages on a host (Katello)
+
+```json
+{
+  "resource": "packages",
+  "action": "index",
+  "params": {
+    "host_id": "myhost.example.com"
+  }
+}
+```
+
+#### 5. List applicable errata for a host (Katello)
+
+```json
+{
+  "resource": "errata",
+  "action": "index",
+  "params": {
+    "host_id": "myhost.example.com"
+  }
+}
+```
+
+#### 6. Install errata on a host (Katello)
+
+```json
+{
+  "resource": "host_errata",
+  "action": "install",
+  "params": {
+    "host_id": "myhost.example.com",
+    "errata_ids": ["RHSA-2024:1234"]
+  }
+}
+```
+
+#### 7. List lifecycle environments
+
+```json
+{
+  "resource": "lifecycle_environments",
+  "action": "index",
+  "params": {
+    "organization_id": "1"
+  }
+}
+```
+
+#### 8. List content views
+
+```json
+{
+  "resource": "content_views",
+  "action": "index",
+  "params": {
+    "organization_id": "1"
+  }
+}
+```
+
+#### 9. Publish a content view version
+
+```json
+{
+  "resource": "content_view_versions",
+  "action": "publish",
+  "params": {
+    "id": "20"
+  }
+}
+```
+
+#### 10. Promote a content view version to a lifecycle environment
+
+```json
+{
+  "resource": "content_view_versions",
+  "action": "promote",
+  "params": {
+    "id": "42",
+    "environment_ids": ["5"]
+  }
+}
+```
+
+### Common search filters
+
+Foreman supports powerful search syntax across most resources:
+
+```
+status = active                    # Host status
+status = error                     # Hosts with errors
+last_report < "30 days ago"        # Stale hosts
+os = AlmaLinux 8.10                # Filter by OS
+hostgroup = DB                     # Filter by host group
+organization = Sofico              # Filter by organization
+location = SSB                     # Filter by location
+certname ~ "web*"                  # Wildcard match on cert name
+has_errata = true                  # Hosts with applicable errata
+subscription_status = valid        # Hosts with valid subscription
 ```
 
 ### Host group structure
-```
-Host Group: RHEL8-Baseline
-  Parent: RHEL8
-  Lifecycle Environment: Production
-  Content View: Base OS
-  Puppet Environment: production
-  Parameters:
-    - ansible_groups: "webservers,monitoring"
-    - root_password: "{{ ENC::<encrypted> }}"
-```
 
-### Provisioning workflow
-1. Create content view with required repositories
-2. Publish and promote through lifecycle environments
-3. Create host group with baseline configuration
-4. Register hosts via PXE boot or Kickstart
-5. Apply configuration via Ansible/Puppet
+```text
+Host Groups:
+  - DB (Database servers)
+  - APP (Application servers)
+  - Default (Baseline servers)
+  - Management (Management/admin systems)
+
+Organizations:
+  - Organization_A
+  - Organization_B
+
+Locations:
+  - Location_1
+  - Location_2
+  - Location_3
+```
 
 ### Best practices
+
 - Use host groups for reusable configurations
 - Use lifecycle environments for promotion pipeline
 - Use content credentials for GPG keys and SSL certs
-- Use Hammer CLI scripts for bulk operations
+- Use Foreman API scripts for bulk operations
 - Version content views for reproducibility
 - Use parameters for host-specific overrides
 - Keep host groups hierarchical (parent/child)

@@ -1,5 +1,5 @@
 ---
-name: elastic-kibana
+name: elk
 description: ELK stack query patterns, index management, and Kibana dashboard configuration
 ---
 
@@ -15,7 +15,13 @@ description: ELK stack query patterns, index management, and Kibana dashboard co
 
 Use this skill when working with Elasticsearch, Kibana, or the ELK stack. Activate when the user mentions elastic, kibana, elk, index, query, dashboard, or log analysis.
 
-## This environment (sofico cluster, via elk MCP)
+## Connection test
+
+```esql
+FROM logs-* | WHERE @timestamp > NOW() - 1 hour | LIMIT 1
+```
+
+## Environment notes
 
 The `elk` MCP connects to Elasticsearch with a least-privilege read key. Know this before querying:
 
@@ -35,6 +41,44 @@ FROM logs-*,metrics-*,audits-* | STATS docs = COUNT(*) BY data_stream.type, data
 ### Common host investigation
 ```esql
 FROM logs-* | WHERE host.name == "HOSTNAME" AND data_stream.dataset == "system.syslog" AND @timestamp > NOW() - 24 hours | KEEP @timestamp, process.name, message | SORT @timestamp DESC | LIMIT 50
+```
+
+### Linux hosts only
+```esql
+FROM logs-* | WHERE host.os.type == "linux" AND @timestamp > NOW() - 24 hours | KEEP @timestamp, host.name, message | SORT @timestamp DESC | LIMIT 10
+```
+
+### Windows hosts only
+```esql
+FROM logs-* | WHERE host.os.type == "windows" AND @timestamp > NOW() - 24 hours | KEEP @timestamp, host.name, event.code, message | SORT @timestamp DESC | LIMIT 10
+```
+
+### Advanced ES|QL Metric & Security Analysis
+
+#### CPU and Memory metrics aggregation (5-minute buckets)
+```esql
+FROM metrics-* 
+| WHERE host.name == "HOSTNAME" AND @timestamp > NOW() - 1 hour 
+| STATS avg_cpu = AVG(system.cpu.actual.pct), max_memory = MAX(system.memory.actual.used.pct) BY bucket(@timestamp, 5 minutes) 
+| SORT bucket DESC
+```
+
+#### Security Audit investigation (Sudo and Failed Logins)
+```esql
+FROM audits-* 
+| WHERE @timestamp > NOW() - 24 hours AND (event.action == "sudo" OR event.outcome == "failure" OR event.category == "authentication") 
+| KEEP @timestamp, host.name, user.name, event.action, event.outcome, message 
+| SORT @timestamp DESC 
+| LIMIT 100
+```
+
+#### Error and Log level trend by Host
+```esql
+FROM logs-* 
+| WHERE @timestamp > NOW() - 12 hours AND (log.level == "error" OR log.level == "critical" OR message LIKE "*error*") 
+| STATS error_count = COUNT(*) BY host.name, data_stream.dataset 
+| SORT error_count DESC 
+| LIMIT 20
 ```
 
 ## Patterns
