@@ -1,25 +1,25 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "copilot/claude-sonnet-5",
-  "small_model": "copilot/gpt-5-mini",
+  "model": "github-copilot/claude-sonnet-5",
+  "small_model": "github-copilot/gpt-5-mini",
   "agent": {
     "plan": {
-      "model": "copilot/claude-opus-5"
+      "model": "github-copilot/claude-opus-5"
     },
     "build": {
-      "model": "copilot/claude-sonnet-5"
+      "model": "github-copilot/claude-sonnet-5"
     },
     "explore": {
-      "model": "copilot/claude-haiku-4-5"
+      "model": "github-copilot/claude-haiku-4.5"
     },
     "implementer": {
-      "model": "copilot/claude-sonnet-5"
+      "model": "github-copilot/claude-sonnet-5"
     },
     "code-reviewer": {
-      "model": "copilot/claude-sonnet-5"
+      "model": "github-copilot/gpt-5.5"
     },
     "spec-reviewer": {
-      "model": "copilot/claude-sonnet-5"
+      "model": "github-copilot/claude-opus-5"
     }
   }
 }
