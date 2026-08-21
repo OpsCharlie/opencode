@@ -21,9 +21,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$PROFILE" in
-home | work) ;;
+home | work | claude) ;;
 *)
-  echo "Error: --profile home|work is required"
+  echo "Error: --profile home|work|claude is required"
   exit 1
   ;;
 esac

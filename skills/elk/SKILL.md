@@ -5,11 +5,7 @@ description: ELK stack query patterns, index management, and Kibana dashboard co
 
 ## What I do
 
-- Write Elasticsearch queries (Query DSL, KQL, Lucene)
-- Design index patterns and mappings
-- Create Kibana dashboards, visualizations, and saved searches
-- Configure index lifecycle management (ILM)
-- Set up alerts and anomaly detection
+- Write Elasticsearch queries (ESQL)
 
 ## When to use me
 
