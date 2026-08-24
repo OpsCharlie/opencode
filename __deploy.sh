@@ -10,6 +10,10 @@ while [[ $# -gt 0 ]]; do
     shift
     ;;
   --profile)
+    [[ $# -ge 2 ]] || {
+      echo "Error: --profile requires a value"
+      exit 1
+    }
     PROFILE="$2"
     shift 2
     ;;
@@ -21,9 +25,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$PROFILE" in
-home | work | claude) ;;
+home | copilot | claude) ;;
 *)
-  echo "Error: --profile home|work|claude is required"
+  echo "Error: --profile home|copilot|claude is required"
   exit 1
   ;;
 esac
@@ -40,7 +44,7 @@ SKILLS_DIR="$CONFIG_DIR/skills"
 [[ -d "$AGENTS_DIR" ]] || mkdir -p "$AGENTS_DIR"
 [[ -d "$SKILLS_DIR" ]] || mkdir -p "$SKILLS_DIR"
 
-for f in tui.json AGENTS.md README_copilot_models.md; do
+for f in tui.json AGENTS.md README_copilot_models.md README_anthropic_models.md; do
   [[ -f "$CONFIG_DIR/$f" ]] && cp "$CONFIG_DIR/$f" "$CONFIG_DIR/$f.bak"
   cp "$DIR/$f" "$CONFIG_DIR/$f"
 done
@@ -56,12 +60,25 @@ jq -s --arg home "$HOME" '
 cp -a "$DIR/commands/"*.md "$COMMANDS_DIR"
 cp -a "$DIR/agents/"*.md "$AGENTS_DIR"
 
+for f in "$COMMANDS_DIR"/*.md; do
+  [[ -f "$DIR/commands/$(basename "$f")" ]] || rm -f "$f"
+done
+for f in "$AGENTS_DIR"/*.md; do
+  [[ -f "$DIR/agents/$(basename "$f")" ]] || rm -f "$f"
+done
+
 for skill_dir in "$DIR/skills/"*/; do
   [[ -d "$skill_dir" ]] || continue
   name=$(basename "$skill_dir")
   [[ -f "$skill_dir/SKILL.md" ]] || continue
   [[ -d "$SKILLS_DIR/$name" ]] || mkdir -p "$SKILLS_DIR/$name"
   cp -a "$skill_dir/SKILL.md" "$SKILLS_DIR/$name/SKILL.md"
+done
+
+for d in "$SKILLS_DIR"/*/; do
+  [[ -d "$d" ]] || continue
+  name=$(basename "$d")
+  [[ -d "$DIR/skills/$name" ]] || rm -rf "$d"
 done
 
 ICON_DIR="$HOME/.local/share/icons"
@@ -71,8 +88,6 @@ ICON_THEME_DIR="$ICON_DIR/hicolor/scalable/apps"
 cp "$DIR/opencode.svg" "$ICON_DIR/opencode.svg"
 cp "$DIR/opencode.svg" "$ICON_THEME_DIR/opencode.svg"
 gtk-update-icon-cache -f -t "$ICON_DIR/hicolor" >/dev/null 2>&1 || true
-# Drop GNOME Shell's stale icon cache so updated launcher icons are picked up
-rm -f "$HOME/.cache/icon-cache.kcache"
 
 if command -v alacritty >/dev/null 2>&1; then
   if "$ADD_ALACRITTY_CONFIG"; then
@@ -88,8 +103,8 @@ if command -v alacritty >/dev/null 2>&1; then
   fi
 fi
 
-ALACRITTY_PATH=$(which alacritty 2>/dev/null || echo "/usr/bin/alacritty")
-CHROME_PATH=$(which google-chrome 2>/dev/null || echo "/usr/bin/google-chrome")
+ALACRITTY_PATH=$(command -v alacritty || echo "/usr/bin/alacritty")
+CHROME_PATH=$(command -v google-chrome || echo "/usr/bin/google-chrome")
 WEB_PORT=4096
 DESKTOP_DIR="$HOME/.local/share/applications"
 [[ -d "$DESKTOP_DIR" ]] || mkdir -p "$DESKTOP_DIR"
