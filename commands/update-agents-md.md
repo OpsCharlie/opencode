@@ -1,6 +1,6 @@
 ---
 description: Rescan project and update AGENTS.md to match current state
-agent: explore
+agent: build
 ---
 
 Read the current AGENTS.md to understand the doc structure, then thoroughly scan the entire project tree — every directory and every file — and rewrite AGENTS.md so it accurately reflects the current state of the project.

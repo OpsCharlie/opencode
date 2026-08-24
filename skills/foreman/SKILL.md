@@ -1,6 +1,7 @@
 ---
 name: foreman
 description: Foreman content management, lifecycle environments, and host metadata querying
+compatibility: opencode
 ---
 
 # Foreman

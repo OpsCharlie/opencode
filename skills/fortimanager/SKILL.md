@@ -1,6 +1,7 @@
 ---
 name: fortimanager
 description: FortiManager content management, firewall policies, device provisioning, CLI scripts, templates, and SD-WAN configuration
+compatibility: opencode
 ---
 
 ## What I do

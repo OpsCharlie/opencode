@@ -18,6 +18,7 @@ When troubleshooting:
 - Verify service status and configuration
 - Check resource usage (disk, memory, CPU, network)
 - Use strace/ltrace for process debugging
+- Query Zabbix (`zabbix_*`) or Elastic/Kibana (`elk_*`) for historical metrics and logs on monitored hosts
 
 When writing shell scripts:
 - Use bash with strict mode (set -euo pipefail)

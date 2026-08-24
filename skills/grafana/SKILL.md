@@ -1,6 +1,7 @@
 ---
 name: grafana
 description: Grafana dashboard design, panel configuration, alerting, and datasource management
+compatibility: opencode
 ---
 
 ## What I do
@@ -52,7 +53,7 @@ histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
 topk(5, rate(process_cpu_seconds_total[5m]))
 
 # Memory usage percentage
-node_memory_MemTotal - node_memory_MemAvailable) / node_memory_MemTotal * 100
+(node_memory_MemTotal - node_memory_MemAvailable) / node_memory_MemTotal * 100
 ```
 
 ### Panel types

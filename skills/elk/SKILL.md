@@ -1,6 +1,7 @@
 ---
 name: elk
 description: ELK stack query patterns, index management, and Kibana dashboard configuration
+compatibility: opencode
 ---
 
 ## What I do

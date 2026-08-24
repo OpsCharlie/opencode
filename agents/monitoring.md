@@ -30,4 +30,6 @@ When working with Elastic/Kibana:
 - Create Kibana dashboards and visualizations
 - Configure index lifecycle management (ILM)
 
-Use the monitoring skill for detailed patterns and examples.
+Use the zabbix, grafana, or elk skill (matching the task) for detailed patterns and examples.
+
+When incidents or monitoring changes need tracking, use Atlassian (`atlassian_*`) tools to create or update the relevant Jira issue or Confluence page.

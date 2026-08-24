@@ -14,7 +14,13 @@
       "dd *": "deny",
       "mkfs*": "deny",
       "sudo *": "ask",
-      "> /dev/*": "deny"
+      "*> /dev/sd*": "deny",
+      "*> /dev/vd*": "deny",
+      "*> /dev/xvd*": "deny",
+      "*> /dev/nvme*": "deny",
+      "*> /dev/hd*": "deny",
+      "*> /dev/mmcblk*": "deny",
+      "*> /dev/dm-*": "deny"
     }
   },
   "plugin": ["opencode-claude-auth@latest"],

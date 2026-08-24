@@ -124,7 +124,7 @@ Load appropriate skills based on what you're implementing:
 
 - **Ansible code**: Load `ansible` skill
 - **Shell scripts**: Load `systematic-debugging` skill for error patterns
-- **Zabbix/Grafana/ELK**: Load `monitoring` skill
+- **Zabbix/Grafana/ELK**: Load the matching `zabbix`, `grafana`, or `elk` skill
 - **FortiManager**: Load `fortimanager` skill
 
 ## Verification commands

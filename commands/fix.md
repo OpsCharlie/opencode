@@ -7,8 +7,8 @@ Find all files changed since the last commit using `git diff --name-only HEAD`. 
 - `.sh`, `.bash`, `.zsh` → `shellcheck` and `shfmt -w`
 - `.py` → `ruff check --fix` and `ruff format`
 - `.lua` → `stylua`
-- `.yaml`, `.yml` → `yaml-language-server` or `prettier`
+- Ansible files (`.yml` in ansible roles) → `ansible-lint` (takes precedence over the generic YAML rule below)
+- `.yaml`, `.yml` (non-Ansible) → `yaml-language-server` or `prettier`
 - `.json`, `.md` → `prettier --write`
-- Ansible files (`.yml` in ansible roles) → `ansible-lint`
 
 Fix any issues found. Show a summary of what was fixed.

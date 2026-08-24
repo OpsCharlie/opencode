@@ -1,6 +1,7 @@
 ---
 name: ansible
 description: High-quality Ansible playbook and role development with best practices, AI-assisted generation, and Linux infrastructure automation
+compatibility: opencode
 ---
 
 ## What I do
@@ -114,11 +115,11 @@ roles/role_name/tasks/
 
 ```yaml
 # Conditional with modern OS facts
-- name: Install Nginx on Debian-based systems
+- name: Install Nginx on RedHat-based systems
   ansible.builtin.package:
     name: nginx
     state: present
-  when: ansible_facts['os_family'] == "Redhat"
+  when: ansible_facts['os_family'] == "RedHat"
 
 # Loop with explicit label for clean output
 - name: Install required system utilities
