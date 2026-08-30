@@ -177,7 +177,7 @@ last(/Template/service.status)<>0
 Service {$SERVICE_URL} is down on {HOST.NAME}
 
 # Macro in thresholds
-avg(/Template/system.cpu.util,5m>{$CPU_HIGH}
+avg(/Template/system.cpu.util,5m)>{$CPU_HIGH}
 ```
 
 ### Low Level Discovery (LLD)

@@ -114,7 +114,7 @@ roles/role_name/tasks/
 
 ```yaml
 # Conditional with modern OS facts
-- name: Install Nginx on Debian-based systems
+- name: Install Nginx on RedHat-based systems
   ansible.builtin.package:
     name: nginx
     state: present
