@@ -9,3 +9,5 @@ last 7 days, sorted by most recently updated.
 
 Before any write operation (creating, editing, or transitioning issues),
 confirm the target site and project, then summarize what changed afterward.
+
+Write the results in a table.

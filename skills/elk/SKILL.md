@@ -22,8 +22,7 @@ FROM logs-* | WHERE @timestamp > NOW() - 1 hour | LIMIT 1
 
 The `elk` MCP connects to Elasticsearch with a least-privilege read key. Know this before querying:
 
-- **`elk_list_indices` and `elk_get_shards` are FORBIDDEN (403)** — the key lacks `_cat` privileges. Do not call them; they always fail. Discover data with `elk_esql` instead.
-- **Prefer `elk_esql`** for everything. `elk_search` also works.
+- **Use `elk_esql` only.** `elk_list_indices` and `elk_get_shards` are FORBIDDEN (403) — the key lacks `_cat` privileges. `elk_get_mappings` and `elk_search` are disallowed by policy even though they may work. Do everything — discovery, mapping inspection, search — through ES|QL.
 - **Data streams** follow `logs-<dataset>-<namespace>` and `metrics-<dataset>-<namespace>`. Query broadly with `FROM logs-*` / `FROM metrics-*`, or target a dataset directly, e.g. `FROM logs-system.syslog-*`.
 - **Audit data** lives in `audits-<dataset>-<namespace>` with a custom `data_stream.type: audits` (not `logs`). Datasets: `auditd` (very high volume), `system`, `file_integrity`. Auditd events carry `event.action` / `event.category`. Query with `FROM audits-*` or `FROM audits-auditd-*`.
 - **Time field**: `@timestamp`.

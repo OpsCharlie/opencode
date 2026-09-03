@@ -23,7 +23,6 @@
       "*> /dev/dm-*": "deny"
     }
   },
-  "plugin": ["opencode-claude-auth@latest"],
   "mcp": {
     "context7": {
       "type": "remote",
