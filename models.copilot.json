@@ -4,7 +4,7 @@
   "small_model": "github-copilot/gpt-5.6-luna",
   "agent": {
     "plan": {
-      "model": "github-copilot/claude-opus-5"
+      "model": "github-copilot/claude-opus-5.5"
     },
     "build": {
       "model": "github-copilot/claude-sonnet-5"
@@ -19,7 +19,7 @@
       "model": "github-copilot/gpt-5.5"
     },
     "spec-reviewer": {
-      "model": "github-copilot/claude-opus-5"
+      "model": "github-copilot/claude-opus-5.5"
     }
   }
 }
